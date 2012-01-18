@@ -149,3 +149,4 @@ import os
 #Need to remove \\; windows formats the path wrong.
 APPLICATION_PATH = os.getcwd().replace("\\","/")
 PROFILE_LOG_BASE = APPLICATION_PATH + '/logs'
+PROFILE_PROBABILITY = 1.0

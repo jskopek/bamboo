@@ -29,16 +29,32 @@ class ProfileMiddleware(object):
         except:
             PROFILE_LOG_BASE = "/logs"
 
+
         random_filename = ''.join(random.choice(string.letters) for i in range(100))
         log_file = os.path.join(PROFILE_LOG_BASE, random_filename)
         return log_file
 
+    def should_run_profiler(self):
+        try:
+            PROFILE_PROBABILITY = settings.PROFILE_PROBABILITY
+        except:
+            PROFILE_PROBABILITY = 0.1
+
+        if not random.random() < PROFILE_PROBABILITY:
+            return False
+        #elif not settings.DEBUG or not request.GET.has_key('prof'):
+            #return False
+        else:
+            return True
+
     def process_request(self, request):
-        if True: # settings.DEBUG and request.GET.has_key('prof'):
+        if self.should_run_profiler(): 
             self.prof = hotshot.Profile( self.generate_logfile_path() )
+        else:
+            self.prof = None
 
     def process_view(self, request, callback, callback_args, callback_kwargs):
-        if True: #settings.DEBUG and request.GET.has_key('prof'):
+        if self.prof: #settings.DEBUG and request.GET.has_key('prof'):
             return self.prof.runcall(callback, request, *callback_args, **callback_kwargs)
 
     #def process_response(self, request, response):
