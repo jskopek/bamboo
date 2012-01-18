@@ -38,6 +38,7 @@ def profile(log_file):
             final_log_file = base + ext
 
             prof = hotshot.Profile(final_log_file)
+            prof.addinfo("testkey", "testvalue")
             try:
                 ret = prof.runcall(f, *args, **kwargs)
             finally:
